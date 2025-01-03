@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppRegistry, View, Text, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavigationContainer } from '@react-navigation/native'; 
+import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import LoginScreen from './Login';
@@ -32,9 +32,9 @@ const index = () => {
   }
 
   return (
-    
+
       <Stack.Navigator>
-        {userToken ? (
+        {true ? (
           <Stack.Screen
             name="TabNavigator"
             component={TabNavigator}
@@ -48,7 +48,7 @@ const index = () => {
           />
         )}
       </Stack.Navigator>
-   
+
   );
 };
 
