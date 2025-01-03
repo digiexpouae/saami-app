@@ -1,6 +1,7 @@
 import { Tabs ,Redirect} from 'expo-router'
 import React from 'react'
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { FontAwesome } from '@expo/vector-icons';
+
 const TabLayout = () => {
     return (<>
       <Tabs screenOptions={{ tabBarActiveTintColor: "blue" , headerShown: false}} >
@@ -12,7 +13,7 @@ const TabLayout = () => {
             title: "Home",
             headerShown:false,
             tabBarIcon: ({ color }) => (
-            <FontAwesome name='home' size={28} />
+            <FontAwesome  name='home' size={28} />
 
             ),
           }}
@@ -23,7 +24,7 @@ const TabLayout = () => {
             title: "Activity",
             headerShown:false,
             tabBarIcon: ({ color }) => (
-              <FontAwesome size={28} name='pin' color={color} />
+              <FontAwesome  size={28} name='key' color={color} />
             ),
           }}
         />
@@ -33,7 +34,7 @@ const TabLayout = () => {
             title: "Leave",
             headerShown:false,
             tabBarIcon: ({ color }) => (
-              <FontAwesome size={28} name='clock' color={color} />
+              <FontAwesome  size={28} name='map' color={color} />
             ),
           }}
         />
@@ -43,7 +44,7 @@ const TabLayout = () => {
             title: "Holiday List",
             headerShown:false,
             tabBarIcon: ({ color }) => (
-              <FontAwesome size={28} name='cog' color={color} />
+              <FontAwesome  size={28} name='table' color={color} />
             ),
           }}
         />
