@@ -30,7 +30,7 @@ export default function LoginScreen() {
       console.log(token);
 
       await AsyncStorage.setItem('userToken', token);
-      router.push("/TabNavigator");
+      router.push("/home");
     } catch (err) {
       setError(err.message);
     }

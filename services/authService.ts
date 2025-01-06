@@ -1,14 +1,11 @@
-import axios from 'axios';
+import api from './axios';
 
 export const login = async (email: string, password: string): Promise<string> => {
-  console.log(email, password);
-
   try {
-    const response = await axios.post('http://192.168.1.7:5000/api/users/login', {
+    const response = await api.post('users/login', {
       email,
       password,
     });
-    console.log(response);
 
     if (response.data.data.token) {
       return response.data.data.token;

@@ -5,7 +5,7 @@ import { AppRegistry, StyleSheet } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 import "../global.css";
 import { Stack } from "expo-router";
-import LoginScreen from "./Login";
+import LoginScreen from "./login";
 
 const index = () => {
   const token = useLocationSlice((state) => state.isLoggedIn);

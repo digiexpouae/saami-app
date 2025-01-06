@@ -1,4 +1,5 @@
 import useDistance from "@/hooks/useDistance";
+import { checkinApi, checkoutApi } from "@/services/apiHandlers";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
@@ -11,7 +12,6 @@ export default function HomeScreen() {
     handleCheckInOut,
     handleLogout,
   } = useDistance();
-  console.log(isInsideOffice);
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -24,7 +24,10 @@ export default function HomeScreen() {
         <Button
           mode='contained'
           style={isCheckedIn ? styles.checkout_button : styles.checkin_button}
-          onPress={handleCheckInOut}
+          onPress={() => {
+            isCheckedIn? checkoutApi() : checkinApi();
+            handleCheckInOut();
+          }}
         >
           {isCheckedIn ? "Check Out" : "Check In"}
         </Button>
