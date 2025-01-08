@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import useLocationSlice from "./useEmployee.js";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import * as TaskManager from "expo-task-manager";
+import { GeofencingEventType } from "expo-location";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 type Coordinates = {
@@ -10,6 +11,23 @@ type Coordinates = {
   longitude: number;
 };
 
+   TaskManager.defineTask(
+     "YOUR_TASK_NAME",
+     ({ data: { eventType, region }, error }) => {
+       if (error) {
+         // check `error.message` for more details.
+         return;
+       }
+       if (eventType === GeofencingEventType.Enter) {
+         return 1;
+         console.log("You've entered region:", region);
+       } else if (eventType === GeofencingEventType.Exit) {
+         console.log("You've left region:", region);
+         return 2;
+       }
+       return 3;
+     }
+   );
 const useDistance = () => {
   const [currentCoords, setCurrentCoords] = useState<Coordinates>({latitude:0, longitude:0});
   const [locationServicesEnabled, setLocationServicesEnabled] = useState(false);
@@ -107,6 +125,7 @@ const useDistance = () => {
     }
   };
 
+
   const executeCheck = () => {
     console.log(currentCoords);
     if (currentCoords) {
@@ -117,19 +136,17 @@ const useDistance = () => {
     }
   };
 
-
   useEffect(() => {
     checkIfLocationEnabled();
     getCurrentLocation();
 
-    const intervalId = setInterval(() => {
+    const intervalId = setInterval(async () => {
       const dummyCoords = {
-        latitude: Math.random() * 100,
-        longitude: Math.random() * 100,
+        latitude: 28.646349,
+        longitude: 77.229981,
       };
-      console.log("Updating dummy coordinates:", dummyCoords);
       getCurrentLocation();
-      isSafeRegion(dummyCoords, currentCoords);
+      const isSafe = isSafeRegion(dummyCoords, currentCoords);
     }, 10000);
 
     return () => {

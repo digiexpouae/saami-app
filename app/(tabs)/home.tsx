@@ -1,20 +1,28 @@
 import useDistance from "@/hooks/useDistance";
+import useGeoFencing from "@/hooks/useGeoFencing";
 import { checkinApi, checkoutApi } from "@/services/apiHandlers";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 
 export default function HomeScreen() {
-  const {
-    isInsideOffice,
-    isCheckedIn,
-    isLoading,
-    handleCheckInOut,
-    handleLogout,
-  } = useDistance();
+  // const {
+  //   isInsideOffice,
+  //   isCheckedIn,
+  //   isLoading,
+  //   handleCheckInOut,
+  //   handleLogout,
+  // } = useDistance();
+
+  const { regionName} =useGeoFencing()
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
+      <Text>
+        
+        {regionName}
+
+      </Text>
+      {/* <View style={styles.content}>
         <Text variant='bodyMedium' style={styles.error}>
           {!isInsideOffice && "Please Go Back To Office In Working Hours!!"}
         </Text>
@@ -31,7 +39,7 @@ export default function HomeScreen() {
         >
           {isCheckedIn ? "Check Out" : "Check In"}
         </Button>
-      </View>
+      </View> */}
     </View>
   );
 }

@@ -14,7 +14,7 @@ const index = () => {
 
   return (
     <PaperProvider>
-      {token ? (
+      {true ? (
         <>
           <Redirect href={"/home"} />
         </>

@@ -33,9 +33,9 @@ export const checkoutApi = async () => {
   }
 };
 
-export const notifyApi = async () => {
+export const notifyApi = async (data:[string|null]) => {
   try {
-    return await api.post(POST_NOTIFY_ADMIN).then((res) => res.data);
+    return await api.post(POST_NOTIFY_ADMIN, data).then((res) => res.data);
   } catch (error) {
     console.log(error);
   }
