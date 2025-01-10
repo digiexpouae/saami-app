@@ -5,23 +5,18 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 
+/*
+1. Implement notify admin api  at enter and exit with correct event names
+2. Implement Get Notify report api on activities screen
+3. Implement Logic to allow/disallow to checkin checkout based of officeStatus
+4. Show Attendance report of every user on attendance screen
+*/
 export default function HomeScreen() {
-  // const {
-  //   isInsideOffice,
-  //   isCheckedIn,
-  //   isLoading,
-  //   handleCheckInOut,
-  //   handleLogout,
-  // } = useDistance();
 
   const { regionName} =useGeoFencing()
   return (
     <View style={styles.container}>
-      <Text>
-        
-        {regionName}
 
-      </Text>
       {/* <View style={styles.content}>
         <Text variant='bodyMedium' style={styles.error}>
           {!isInsideOffice && "Please Go Back To Office In Working Hours!!"}

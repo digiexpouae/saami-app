@@ -2,31 +2,13 @@ import React, { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 
+type Regions {
+  identifier: string;
+  latitude: number;
+  longitude: number;
+  radius: number;
+}
 
-
-export default function useGeoFencing() {
-    const [regionName, setRegionName] = useState("")
-
-    TaskManager.defineTask(
-      "GEOFENCING_TASK",
-      ({ data: { eventType, region }, error }) => {
-        if (error) {
-          console.error("Geofencing task error:", error);
-          return;
-        }
-
-        if (eventType === Location.GeofencingEventType.Enter) {
-            console.log("User entered region:", region.identifier);
-            setRegionName(`Entered ${region.identifier}`)
-          alert("Entered " + region.identifier);
-        } else if (eventType === Location.GeofencingEventType.Exit) {
-            console.log("User exited region:", region.identifier);
-            setRegionName(`Exitted ${region.identifier}`);
-
-          alert("Exited " + region.identifier);
-        }
-      }
-    );
   const requestPermissions = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -42,16 +24,44 @@ export default function useGeoFencing() {
     return true;
   };
 
-  const startGeofencing = async (regions) => {
+  const startGeofencing = async (regions:[Regions]) => {
     if (!(await requestPermissions())) return;
     try {
-        await Location.startGeofencingAsync("GEOFENCING_TASK", regions);
+      await Location.startGeofencingAsync("GEOFENCING_TASK", regions);
       console.log("Geofencing started.");
     } catch (error) {
-        console.error("Error starting geofencing:", error);
-        throw new Error("Error starting geofencing", error);
+      console.error("Error starting geofencing:", error);
+      throw new Error("Error starting geofencing", error);
     }
   };
+
+export default function useGeoFencing() {
+    const [regionName, setRegionName] = useState("")
+
+    TaskManager.defineTask(
+      "GEOFENCING_TASK",
+      ({ data: { eventType, region }, error }) => {
+        if (error) {
+          console.error("Geofencing task error:", error);
+          return;
+        }
+
+        if (eventType === Location.GeofencingEventType.Enter) {
+          console.log("User entered region:", region.identifier);
+          //trigger api to create log event with enter
+            setRegionName(`Entered ${region.identifier}`)
+          alert("Entered " + region.identifier);
+        } else if (eventType === Location.GeofencingEventType.Exit) {
+          //trigger api to create log event with enter
+
+          console.log("User exited region:", region.identifier);
+          setRegionName(`Exitted ${region.identifier}`);
+
+          alert("Exited " + region.identifier);
+        }
+      }
+    );
+
 
   useEffect(() => {
     const regions = [
@@ -70,3 +80,5 @@ export default function useGeoFencing() {
 
   return {regionName};
 }
+
+
