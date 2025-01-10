@@ -23,14 +23,14 @@ export default function LoginScreen() {
 
 
   const handleLogin = async () => {
-    
-    
+
+
     try {
       const token = await login(email, password);
       console.log(token);
-      
+
       await AsyncStorage.setItem('userToken', token);
-      router.push("/TabNavigator");
+      router.push("/home");
     } catch (err) {
       setError(err.message);
     }
@@ -39,13 +39,13 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       {/* Logo Section */}
-     
+
         <Image
           source={require("../assets/images/Logo.png")} // Preloaded logo
           style={styles.logo}
           resizeMode="contain"
         />
-      
+
       <Text style={styles.title}>ATTEND ACE</Text>
 
       {/* Login Text with Underline */}
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     justifyContent: "center", // Moves the content to the bottom
-    paddingBottom: 80, 
+    paddingBottom: 80,
     //  justifyContent: "flex-end", // Moves the content to the bottom
      // Adjust to control bottom spacing// Adjust to control bottom spacing
   },
