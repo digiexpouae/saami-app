@@ -2,21 +2,21 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 
- const api = axios.create({
-   baseURL: "http://localhost:5000/api",
- });
+const api = axios.create({
+  baseURL: "http://192.168.17.160:5000/api",
+});
 
- api.interceptors.request.use(
-   async (config) => {
-     const token = await AsyncStorage.getItem("userToken");
-     if (token) {
-       config.headers.authToken = token;
-     }
-     return config;
-   },
-   (error) => {
-     return Promise.reject(error);
-   }
- );
+api.interceptors.request.use(
+  async (config) => {
+    const token = await AsyncStorage.getItem("userToken");
+    if (token) {
+      config.headers.authToken = token;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
- export default api
+export default api

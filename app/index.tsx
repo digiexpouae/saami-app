@@ -5,16 +5,17 @@ import { AppRegistry, StyleSheet } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 import "../global.css";
 import { Stack } from "expo-router";
-import LoginScreen from "./login";
+import LoginScreen from "./Login";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const index = () => {
-  const token = useLocationSlice((state) => state.isLoggedIn);
-
+  const token = useLocationSlice((state) => state.token);
+  const token1 = AsyncStorage.getItem("userToken");
   console.log("Token", token);
 
   return (
     <PaperProvider>
-      {true ? (
+      {token ? (
         <>
           <Redirect href={"/home"} />
         </>

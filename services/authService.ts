@@ -1,6 +1,8 @@
 import api from './axios';
 
 export const login = async (email: string, password: string): Promise<string> => {
+  console.log(email, password);
+
   try {
     const response = await api.post('users/login', {
       email,
@@ -8,7 +10,7 @@ export const login = async (email: string, password: string): Promise<string> =>
     });
 
     if (response.data.data.token) {
-      return response.data.data.token;
+      return response.data.data;
     } else {
       throw new Error('Invalid credentials');
     }

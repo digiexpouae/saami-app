@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
-
-type Regions {
+import { notifyApi } from "../services/apiHandlers";
+import useLocationSlice from "./useEmployee";
+type Regions = {
   identifier: string;
   latitude: number;
   longitude: number;
@@ -37,10 +38,11 @@ type Regions {
 
 export default function useGeoFencing() {
     const [regionName, setRegionName] = useState("")
-
+     const user = useLocationSlice((state) => state.user);
+     const setOfficeStatus = useLocationSlice((state) => state.setOfficeStatus);
     TaskManager.defineTask(
       "GEOFENCING_TASK",
-      ({ data: { eventType, region }, error }) => {
+      async ({ data: { eventType, region }, error }) => {
         if (error) {
           console.error("Geofencing task error:", error);
           return;
@@ -51,6 +53,16 @@ export default function useGeoFencing() {
           //trigger api to create log event with enter
             setRegionName(`Entered ${region.identifier}`)
           alert("Entered " + region.identifier);
+          setOfficeStatus(true);
+          try {
+          await notifyApi({
+            employeeId: user.id,  
+            eventName: "enter",  
+          });
+          console.log("Notified admin for entering:", region.identifier);
+        } catch (err) {
+          console.error("Error notifying admin for entering:", err);
+        }
         } else if (eventType === Location.GeofencingEventType.Exit) {
           //trigger api to create log event with enter
 
@@ -58,6 +70,16 @@ export default function useGeoFencing() {
           setRegionName(`Exitted ${region.identifier}`);
 
           alert("Exited " + region.identifier);
+          setOfficeStatus(false);
+          try {
+          await notifyApi({
+            employeeId: user.id,  
+            eventName: "exit",  
+          });
+          console.log("Notified admin for exiting:", region.identifier);
+        } catch (err) {
+          console.error("Error notifying admin for exiting:", err);
+        }
         }
       }
     );

@@ -1,40 +1,54 @@
-import useDistance from "@/hooks/useDistance";
-import useGeoFencing from "@/hooks/useGeoFencing";
-import { checkinApi, checkoutApi } from "@/services/apiHandlers";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
+import useLocationSlice from "@/hooks/useEmployee"; // Import the Zustand store
+import { checkinApi, checkoutApi } from "@/services/apiHandlers"; // Import API functions
 
-/*
-1. Implement notify admin api  at enter and exit with correct event names
-2. Implement Get Notify report api on activities screen
-3. Implement Logic to allow/disallow to checkin checkout based of officeStatus
-4. Show Attendance report of every user on attendance screen
-*/
 export default function HomeScreen() {
+  const { isInsideOffice, isCheckedIn, setCheckIn } = useLocationSlice((state) => state); // Get state from Zustand store
 
-  const { regionName} =useGeoFencing()
+
+  const handleCheckInOut = async () => {
+    if (!isInsideOffice) {
+      alert("Please enter the office to check in!");
+      return;
+    }
+
+    if (!isCheckedIn) {
+   
+      await checkinApi();
+      setCheckIn(true); 
+    } else {
+      
+      await checkoutApi();
+      setCheckIn(false); 
+    }
+  };
+
   return (
     <View style={styles.container}>
+      <View style={styles.content}>
+        {/* Show error message if user is outside the office */}
+        {!isInsideOffice && (
+          <Text variant="bodyMedium" style={styles.error}>
+            Please go back to the office during working hours!
+          </Text>
+        )}
 
-      {/* <View style={styles.content}>
-        <Text variant='bodyMedium' style={styles.error}>
-          {!isInsideOffice && "Please Go Back To Office In Working Hours!!"}
+        <Text variant="titleLarge" style={styles.title}>
+          {`Tap here to check ${isCheckedIn ? `Out` : `In`}`}
         </Text>
-        <Text variant='titleLarge' style={styles.title}>
-          {`Tap Here To Check ${isCheckedIn ? `Out` : `In`}`}
-        </Text>
+
+        {/* Button to check in or out */}
         <Button
-          mode='contained'
+          mode="contained"
           style={isCheckedIn ? styles.checkout_button : styles.checkin_button}
-          onPress={() => {
-            isCheckedIn? checkoutApi() : checkinApi();
-            handleCheckInOut();
-          }}
+          onPress={handleCheckInOut}
+          disabled={!isInsideOffice} // Disable button if not inside office
         >
           {isCheckedIn ? "Check Out" : "Check In"}
         </Button>
-      </View> */}
+      </View>
     </View>
   );
 }
