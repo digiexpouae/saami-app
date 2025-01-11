@@ -3,11 +3,13 @@ import { StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import useLocationSlice from "@/hooks/useEmployee"; // Import the Zustand store
 import { checkinApi, checkoutApi } from "@/services/apiHandlers"; // Import API functions
-
+import  useGeoFencing  from "@/hooks/useGeoFencing"; // Import the useGeoFencing hook
 export default function HomeScreen() {
   const { isInsideOffice, isCheckedIn, setCheckIn } = useLocationSlice((state) => state); // Get state from Zustand store
 
-
+  const { regionName } = useGeoFencing(); 
+  
+  // Get function from useGeoFencing hook
   const handleCheckInOut = async () => {
     if (!isInsideOffice) {
       alert("Please enter the office to check in!");
@@ -34,7 +36,11 @@ export default function HomeScreen() {
             Please go back to the office during working hours!
           </Text>
         )}
-
+  
+        {/* Show region name */}
+        <Text variant="bodyMedium" style={styles.error}>
+          {regionName}  
+        </Text>
         <Text variant="titleLarge" style={styles.title}>
           {`Tap here to check ${isCheckedIn ? `Out` : `In`}`}
         </Text>

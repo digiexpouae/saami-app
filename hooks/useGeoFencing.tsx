@@ -64,7 +64,6 @@ export default function useGeoFencing() {
           console.error("Error notifying admin for entering:", err);
         }
         } else if (eventType === Location.GeofencingEventType.Exit) {
-          //trigger api to create log event with enter
 
           console.log("User exited region:", region.identifier);
           setRegionName(`Exitted ${region.identifier}`);
@@ -89,8 +88,8 @@ export default function useGeoFencing() {
     const regions = [
       {
         identifier: "region1",
-        latitude: 28.653779,
-        longitude: 77.223430,
+        latitude: 128.653779,
+        longitude: 277.223430,
         radius: 500,
       },
     ];

@@ -9,7 +9,7 @@ const Activities = () => {
     const fetchActivityData = async () => {
       try {
         const response = await getEmployeeActivityApi(); 
-        console.log(response); 
+      
         if (response.success) {
           setActivityData(response.data); 
         } else {

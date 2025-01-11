@@ -1,7 +1,6 @@
 import api from './axios';
 
 export const login = async (email: string, password: string): Promise<string> => {
-  console.log(email, password);
 
   try {
     const response = await api.post('users/login', {

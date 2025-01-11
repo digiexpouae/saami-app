@@ -11,7 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const index = () => {
   const token = useLocationSlice((state) => state.token);
   const token1 = AsyncStorage.getItem("userToken");
-  console.log("Token", token);
+
 
   return (
     <PaperProvider>

@@ -30,7 +30,7 @@ export default function LoginScreen() {
 
     try {
       const {token , user} = await login(email, password);
-      console.log(user);
+   
       
       await AsyncStorage.setItem('userToken', token);
       setIsLoggedIn(true);
