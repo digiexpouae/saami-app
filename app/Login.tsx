@@ -11,25 +11,31 @@ import { login } from '../services/authService';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for the eye icon
+import useLocationSlice from "@/hooks/useEmployee"; // Import Zustand store
 
 export default function LoginScreen() {
-    const [secureText, setSecureText] = useState(true); // State to toggle password visibility
+  const [secureText, setSecureText] = useState(true); // State to toggle password visibility
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const router = useRouter();
-
+  const setIsLoggedIn = useLocationSlice((state) => state.setIsLoggedIn);
+  const setToken = useLocationSlice((state) => state.setToken);
+  const setUser = useLocationSlice((state) => state.setUser);
 
   const handleLogin = async () => {
 
 
     try {
-      const token = await login(email, password);
-      console.log(token);
-
+      const {token , user} = await login(email, password);
+   
+      
       await AsyncStorage.setItem('userToken', token);
+      setIsLoggedIn(true);
+      setToken(token);
+      setUser(user);
       router.push("/home");
     } catch (err) {
       setError(err.message);

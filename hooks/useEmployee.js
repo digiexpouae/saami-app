@@ -4,6 +4,8 @@ const useLocationSlice = create((set, get) => ({
   isInsideOffice: false,
   isCheckedIn: false,
   isLoggedIn: false,
+  token: null,
+  user: null,
 
   setOfficeStatus: (status) =>
     set(() => ({
@@ -16,6 +18,14 @@ const useLocationSlice = create((set, get) => ({
   setIsLoggedIn: (status) =>
     set(() => ({
       isLoggedIn: status,
+    })),
+   setToken: (token) =>
+    set(() => ({
+      token,
+    })),
+    setUser: (user) =>
+    set(() => ({
+      user,
     })),
 }));
 
