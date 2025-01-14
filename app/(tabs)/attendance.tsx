@@ -4,13 +4,13 @@ import { getEmployeeAttendanceApi } from '@/services/apiHandlers'; // Adjust thi
 import useLocationSlice from "@/hooks/useEmployee";
 const Attendance = () => {
   const [attendanceData, setAttendanceData] = useState([]);
-   const { isCheckedIn } = useLocationSlice(state => state);
+   const { isCheckedIn , userId} = useLocationSlice(state => state);
   // Fetch attendance data when the component mounts
   useEffect(() => {
     const fetchAttendance = async () => {
       try {
-        const response = await getEmployeeAttendanceApi();
-        if (response.status === 'success') {
+        const response = await getEmployeeAttendanceApi(userId);
+        if (response?.status === 'success') {
           setAttendanceData(response.data); // Set the retrieved data
         } else {
           console.error('Error fetching data');

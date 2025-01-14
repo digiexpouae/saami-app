@@ -29,7 +29,6 @@ type Regions = {
     if (!(await requestPermissions())) return;
     try {
       await Location.startGeofencingAsync("GEOFENCING_TASK", regions);
-      console.log("Geofencing started.");
     } catch (error) {
       console.error("Error starting geofencing:", error);
       throw new Error("Error starting geofencing", error);
@@ -49,33 +48,27 @@ export default function useGeoFencing() {
         }
 
         if (eventType === Location.GeofencingEventType.Enter) {
-          console.log("User entered region:", region.identifier);
           //trigger api to create log event with enter
             setRegionName(`Entered ${region.identifier}`)
           alert("Entered " + region.identifier);
           setOfficeStatus(true);
           try {
           await notifyApi({
-            employeeId: user.id,  
-            eventName: "enter",  
+            eventName: "enter",
           });
-          console.log("Notified admin for entering:", region.identifier);
         } catch (err) {
           console.error("Error notifying admin for entering:", err);
         }
         } else if (eventType === Location.GeofencingEventType.Exit) {
 
-          console.log("User exited region:", region.identifier);
           setRegionName(`Exitted ${region.identifier}`);
 
           alert("Exited " + region.identifier);
           setOfficeStatus(false);
           try {
           await notifyApi({
-            employeeId: user.id,  
-            eventName: "exit",  
+            eventName: "exit",
           });
-          console.log("Notified admin for exiting:", region.identifier);
         } catch (err) {
           console.error("Error notifying admin for exiting:", err);
         }
@@ -88,9 +81,9 @@ export default function useGeoFencing() {
     const regions = [
       {
         identifier: "region1",
-        latitude: 128.653779,
-        longitude: 277.223430,
-        radius: 500,
+        latitude: 28.653779,
+        longitude: 77.223430,
+        radius: 50,
       },
     ];
     startGeofencing(regions);

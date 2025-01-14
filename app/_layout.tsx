@@ -1,18 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
-import { Stack } from "expo-router";
+import { Stack, usePathname } from "expo-router";
 import "../global.css";
+import useLocationSlice from "@/hooks/useEmployee";
 
 const RootLayout = () => {
+  const path = usePathname();
+  const state = useLocationSlice(state => state)
+
+  useEffect(() => {
+    console.log(state)
+    console.log("Triggered layout", path);
+  }, [path]);
   return (
     <SafeAreaView style={styles.safeArea}>
       <Stack
         screenOptions={{
-          headerShown: false, 
+          headerShown: false,
         }}
       >
-        <Stack.Screen name="(tabs)" options={{ header: () => null }} />
-        <Stack.Screen name="/" options={{ header: () => null }} />
+        <Stack.Screen name='(tabs)' options={{ header: () => null }} />
+        <Stack.Screen name='/' options={{ header: () => null }} />
       </Stack>
     </SafeAreaView>
   );
