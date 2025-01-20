@@ -34,9 +34,9 @@ console.log(activityData)
   return (
     <View style={styles.container}>
       {activityData ? (
-        activityData.map((data) => renderCard(data)) // Loop through the data array and render each card
+        activityData.map((data) => renderCard(data)) 
       ) : (
-        <Text>Loading...</Text> // Show loading if data is not yet fetched
+        <Text>Loading...</Text> 
       )}
     </View>
   );

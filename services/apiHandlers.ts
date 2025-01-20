@@ -17,6 +17,7 @@ const EMPLOYEE_ACTIVITY = "notify/my-activity";
 
 
 const EMPLOYEE_ATTENDANCE = "attendance/get-summary";
+const GET_ALL_ATTENDANCE = "attendance/get-all";
 
 export const checkinApi = async () => {
   try {
@@ -37,7 +38,7 @@ export const checkoutApi = async () => {
   }
 };
 
-export const notifyApi = async (data: {eventName:string} ) => {
+export const notifyApi = async (data: { eventName: string }) => {
   try {
     return await api.post(POST_NOTIFY_ADMIN, data).then((res) => res.data);
   } catch (error) {
@@ -67,9 +68,17 @@ export const getEmployeeActivityApi = async () => {
   }
 }
 
-export const getEmployeeAttendanceApi = async (id="1") => {
+export const getEmployeeAttendanceApi = async (id = "1") => {
   try {
     return await api.post(`${EMPLOYEE_ATTENDANCE}/${id}`).then((res) => res.data);
+  } catch (error) {
+
+  }
+}
+
+export const getAllAttendanceApi = async () => {
+  try {
+    return await api.get(GET_ALL_ATTENDANCE).then((res) => res.data);
   } catch (error) {
 
   }

@@ -1,17 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { getEmployeeAttendanceApi } from '@/services/apiHandlers'; // Adjust this import as per your project structure
+import { getEmployeeAttendanceApi ,getAllAttendanceApi} from '@/services/apiHandlers'; // Adjust this import as per your project structure
 import useLocationSlice from "@/hooks/useEmployee";
 const Attendance = () => {
   const [attendanceData, setAttendanceData] = useState([]);
-   const { isCheckedIn , userId} = useLocationSlice(state => state);
+   const { isCheckedIn , userId,user} = useLocationSlice(state => state);
+
+
+   
   // Fetch attendance data when the component mounts
   useEffect(() => {
     const fetchAttendance = async () => {
       try {
-        const response = await getEmployeeAttendanceApi(userId);
+        let response;
+
+        // Check user role and call the appropriate API
+        if (user.role === "admin") {
+          response = await getAllAttendanceApi();
+        } else {
+          response = await getEmployeeAttendanceApi(userId);
+        }
+
         if (response?.status === 'success') {
-          setAttendanceData(response.data); // Set the retrieved data
+          setAttendanceData(response.data); 
         } else {
           console.error('Error fetching data');
         }
@@ -28,11 +39,19 @@ const Attendance = () => {
 
     return (
       <View style={styles.attendanceItem}>
-        <Text style={styles.timeText}>Time: {time}</Text>
-        <Text style={styles.statusText}>
-          Status: {item.status === 'checked_in' ? 'Checked In' : 'Checked Out'}
-        </Text>
-      </View>
+      <Text style={styles.timeText}>Time: {time}</Text>
+      <Text style={[styles.statusText, item.status === 'checked_in' ? styles.checkedIn : styles.checkedOut]}>
+        Status: {item.status === 'checked_in' ? 'Checked In' : 'Checked Out'}
+      </Text>
+
+      {/* Conditionally render userId and username based on user role */}
+      {user.role === 'admin' && (
+        <View style={styles.userInfo}>
+          <Text style={styles.userInfoText}>UserId: {item.user._id}</Text>
+          <Text style={styles.userInfoText}>Name: {item.user.username}</Text>
+        </View>
+      )}
+    </View>
     );
   };
 
@@ -44,7 +63,7 @@ const Attendance = () => {
         <FlatList
           data={attendanceData}
           renderItem={renderItem}
-          keyExtractor={(item) => item._id} // Ensure each item has a unique key
+          keyExtractor={(item) => item._id} 
         />
       ) : (
         <Text style={styles.noDataText}>No attendance data available</Text>
@@ -85,6 +104,17 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 16,
     color: 'green', // Default color for checked_in
+  },
+   userInfo: {
+    marginTop: 12,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+  },
+  userInfoText: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 4,
   },
   noDataText: {
     fontSize: 18,
