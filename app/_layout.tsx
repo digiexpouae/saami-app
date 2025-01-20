@@ -8,10 +8,7 @@ const RootLayout = () => {
   const path = usePathname();
   const state = useLocationSlice(state => state)
 
-  useEffect(() => {
-    console.log(state)
-    console.log("Triggered layout", path);
-  }, [path]);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <Stack

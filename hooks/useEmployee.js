@@ -14,7 +14,8 @@ const useLocationSlice = create((set) => ({
       const isLoggedIn = await AsyncStorage.getItem("isLoggedIn");
       const token = await AsyncStorage.getItem("userToken");
       const userId = await AsyncStorage.getItem("userId");
-      set({ isLoggedIn, token, userId });
+      const user  = JSON.parse(await AsyncStorage.getItem("user"));
+      set({ isLoggedIn, token, userId, user });
     } catch (error) {
       console.error("Error initializing from AsyncStorage:", error);
       set({ isLoggedIn: false, token: null, userId: null });
