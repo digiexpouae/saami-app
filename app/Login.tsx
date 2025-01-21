@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import { login } from '../services/authService';
+import { login } from "../services/authService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for the eye icon
@@ -26,19 +26,22 @@ export default function LoginScreen() {
   const setUser = useLocationSlice((state) => state.setUser);
 
   const handleLogin = async () => {
-
-
     try {
-      const {token , user} = await login(email, password);
-   
-      
-      await AsyncStorage.setItem('userToken', token);
-      setIsLoggedIn(true);
-      setToken(token);
-      setUser(user);
-      router.push("/home");
+      const { token, user } = await login(email, password);
+      console.log("This is User after Login ",user)
+
+      await AsyncStorage.setItem("userToken", token);
+      await AsyncStorage.setItem("userId", user.id);
+      await AsyncStorage.setItem("isLoggedIn", "true");
+      await AsyncStorage.setItem("user", JSON.stringify(user));
+
+      if (user.role === "admin") {
+      router.push("/attendance");
+      } else {
+          router.push("/home");
+        }
     } catch (err) {
-      setError(err.message);
+      setError(err?.message);
     }
   };
 
@@ -46,13 +49,13 @@ export default function LoginScreen() {
     <View style={styles.container}>
       {/* Logo Section */}
 
-        <Image
-          source={require("../assets/images/Logo.png")} // Preloaded logo
-          style={styles.logo}
-          resizeMode="contain"
-        />
+      <Image
+        source={require("../assets/images/Logo.png")} // Preloaded logo
+        style={styles.logo}
+        resizeMode='contain'
+      />
 
-      <Text style={styles.title}>ATTEND ACE</Text>
+      <Text style={styles.title}>SAMIRAN TRADERS</Text>
 
       {/* Login Text with Underline */}
       <View style={styles.loginTextContainer}>
@@ -63,34 +66,34 @@ export default function LoginScreen() {
       {/* Input Fields */}
       <View style={styles.inputContainer}>
         <TextInput
-          placeholder="Email"
+          placeholder='Email'
           value={email}
           onChangeText={setEmail}
           style={styles.input}
-          placeholderTextColor="#999"
+          placeholderTextColor='#999'
         />
         <TextInput
-          placeholder="Password"
+          placeholder='Password'
           value={password}
           onChangeText={setPassword}
           secureTextEntry={secureText}
           style={styles.input}
-          placeholderTextColor="#999"
+          placeholderTextColor='#999'
         />
         <TouchableOpacity
-            style={styles.eyeIcon}
-            onPress={() => setSecureText(!secureText)}
-          >
-            <Ionicons
-              name={secureText ? "eye-off" : "eye"} // Change icon based on visibility state
-              size={20}
-              color="#999"
-            />
-          </TouchableOpacity>
+          style={styles.eyeIcon}
+          onPress={() => setSecureText(!secureText)}
+        >
+          <Ionicons
+            name={secureText ? "eye-off" : "eye"} // Change icon based on visibility state
+            size={20}
+            color='#999'
+          />
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity>
+      {/* <TouchableOpacity>
         <Text style={styles.forgotPassword}>Forgot Password?</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       {/* Login Button */}
@@ -110,14 +113,14 @@ const styles = StyleSheet.create({
     justifyContent: "center", // Moves the content to the bottom
     paddingBottom: 80,
     //  justifyContent: "flex-end", // Moves the content to the bottom
-     // Adjust to control bottom spacing// Adjust to control bottom spacing
+    // Adjust to control bottom spacing// Adjust to control bottom spacing
   },
   logo: {
     width: 200,
     height: 100,
     // marginBottom: 20, // Space between the logo and the title
   },
-    loadingText: {
+  loadingText: {
     fontSize: 16,
     color: "#999",
     marginBottom: 20,
@@ -158,19 +161,19 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
 
-    eyeIcon: {
+  eyeIcon: {
     position: "absolute",
     right: 15,
     top: 80,
   },
-forgotPassword: {
-  alignSelf: "flex-end", // Aligns the text to the right
-  color: "#000",
-  fontSize: 14,
-  marginBottom: 50,
-  marginLeft:210
-  // Space between "Forgot Password?" and the login button
-},
+  forgotPassword: {
+    alignSelf: "flex-end", // Aligns the text to the right
+    color: "#000",
+    fontSize: 14,
+    marginBottom: 50,
+    marginLeft: 210,
+    // Space between "Forgot Password?" and the login button
+  },
   loginButton: {
     width: "100%",
     padding: 15,

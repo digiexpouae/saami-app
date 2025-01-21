@@ -8,10 +8,10 @@ const Activities = () => {
   useEffect(() => {
     const fetchActivityData = async () => {
       try {
-        const response = await getEmployeeActivityApi(); 
-      
+        const response = await getEmployeeActivityApi();
+
         if (response.success) {
-          setActivityData(response.data); 
+          setActivityData(response.data);
         } else {
           console.error('Failed to fetch activity data');
         }
@@ -22,7 +22,7 @@ const Activities = () => {
 
     fetchActivityData();
   }, []);
-
+console.log(activityData)
   const renderCard = (data) => (
     <View style={styles.card} key={data._id}>
       <Text style={styles.cardTitle}>Activity on {data._id}</Text>
@@ -34,9 +34,9 @@ const Activities = () => {
   return (
     <View style={styles.container}>
       {activityData ? (
-        activityData.map((data) => renderCard(data)) // Loop through the data array and render each card
+        activityData.map((data) => renderCard(data)) 
       ) : (
-        <Text>Loading...</Text> // Show loading if data is not yet fetched
+        <Text>Loading...</Text> 
       )}
     </View>
   );

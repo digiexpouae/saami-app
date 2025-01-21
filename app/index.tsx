@@ -1,21 +1,21 @@
-import useLocationSlice from "@/hooks/useEmployee";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Redirect } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { AppRegistry, StyleSheet } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 import "../global.css";
-import { Stack } from "expo-router";
 import LoginScreen from "./Login";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const index = () => {
-  const token = useLocationSlice((state) => state.token);
-  const token1 = AsyncStorage.getItem("userToken");
+  const [key, setKey] = useState<string|null>(null);
+  AsyncStorage.getItem("userToken").then((res) => {
+    setKey(res);
+  });
 
 
   return (
     <PaperProvider>
-      {token ? (
+      {key ? (
         <>
           <Redirect href={"/home"} />
         </>
