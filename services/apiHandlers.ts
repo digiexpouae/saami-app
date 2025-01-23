@@ -76,6 +76,16 @@ export const getEmployeeAttendanceApi = async (id = "1") => {
   }
 }
 
+export const getUserByToken = async () => {
+  try {
+
+    return await api.post( `/users/token`).then((res) => res.data)
+  } catch (error) {
+    console.log(error);
+
+  }
+}
+
 export const getAllAttendanceApi = async () => {
   try {
     return await api.get(GET_ALL_ATTENDANCE).then((res) => res.data);

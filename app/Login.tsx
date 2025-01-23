@@ -21,19 +21,15 @@ export default function LoginScreen() {
   const [error, setError] = useState("");
 
   const router = useRouter();
-  const setIsLoggedIn = useLocationSlice((state) => state.setIsLoggedIn);
   const setToken = useLocationSlice((state) => state.setToken);
-  const setUser = useLocationSlice((state) => state.setUser);
-
+  
   const handleLogin = async () => {
     try {
       const { token, user } = await login(email, password);
-      console.log("This is User after Login ",user)
 
       await AsyncStorage.setItem("userToken", token);
-      await AsyncStorage.setItem("userId", user.id);
-      await AsyncStorage.setItem("isLoggedIn", "true");
-      await AsyncStorage.setItem("user", JSON.stringify(user));
+      setToken(token)
+
 
       if (user.role === "admin") {
       router.push("/attendance");

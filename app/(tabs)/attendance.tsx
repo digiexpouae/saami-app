@@ -7,7 +7,6 @@ const Attendance = () => {
    const { isCheckedIn , userId,user} = useLocationSlice(state => state);
 
 
-   
   // Fetch attendance data when the component mounts
   useEffect(() => {
     const fetchAttendance = async () => {
@@ -15,14 +14,14 @@ const Attendance = () => {
         let response;
 
         // Check user role and call the appropriate API
-        if (user.role === "admin") {
+        if (user.role === "admin" ) {
           response = await getAllAttendanceApi();
         } else {
-          response = await getEmployeeAttendanceApi(userId);
+          response = await getEmployeeAttendanceApi(user?._id);
         }
 
         if (response?.status === 'success') {
-          setAttendanceData(response.data); 
+          setAttendanceData(response.data);
         } else {
           console.error('Error fetching data');
         }
@@ -34,36 +33,41 @@ const Attendance = () => {
     fetchAttendance();
   }, [isCheckedIn]);
 
+  const getStatus = (status) => {
+return status === "checked_in" ? "checked In" : "checked out"
+  }
   const renderItem = ({ item }) => {
     const time = new Date(item.time).toLocaleString(); // Format time into a readable string
-
+    const { role, username} = user
     return (
       <View style={styles.attendanceItem}>
-      <Text style={styles.timeText}>Time: {time}</Text>
-      <Text style={[styles.statusText, item.status === 'checked_in' ? styles.checkedIn : styles.checkedOut]}>
-        Status: {item.status === 'checked_in' ? 'Checked In' : 'Checked Out'}
-      </Text>
+        <Text style={styles.timeText}>
+          You <Text style={[item.status ==='checked_in'?styles.statusText: styles.checkoutText]}>{getStatus(item.status)} </Text>{" "}
+          at {time}
+        </Text>
 
-      {/* Conditionally render userId and username based on user role */}
-      {user.role === 'admin' && (
-        <View style={styles.userInfo}>
-          <Text style={styles.userInfoText}>UserId: {item.user._id}</Text>
-          <Text style={styles.userInfoText}>Name: {item.user.username}</Text>
-        </View>
-      )}
-    </View>
+
+        {/* Conditionally render userId and username based on user role */}
+        {user.role === "admin" && (
+          <View style={styles.userInfo}>
+            <Text style={styles.userInfoText}>UserId: {item.user._id}</Text>
+            <Text style={styles.userInfoText}>Name: {item.user.username}</Text>
+          </View>
+        )}
+      </View>
     );
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Attendance Records</Text>
+      <Text style={styles.heading}>Attendance Records </Text>
+      <Text style={styles.heading}> Of 30 Days</Text>
 
       {attendanceData.length > 0 ? (
         <FlatList
-          data={attendanceData}
+          data={attendanceData.reverse()}
           renderItem={renderItem}
-          keyExtractor={(item) => item._id} 
+          keyExtractor={(item) => item._id}
         />
       ) : (
         <Text style={styles.noDataText}>No attendance data available</Text>
@@ -104,6 +108,10 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 16,
     color: 'green', // Default color for checked_in
+  },
+  checkoutText: {
+    fontSize: 16,
+    color:'red'
   },
    userInfo: {
     marginTop: 12,
