@@ -21,17 +21,18 @@ export default function LoginScreen() {
   const [error, setError] = useState("");
 
   const router = useRouter();
-  const setToken = useLocationSlice((state) => state.setToken);
-  
+  const {setToken, setUser} = useLocationSlice((state) => state);
+
   const handleLogin = async () => {
     try {
       const { token, user } = await login(email, password);
 
       await AsyncStorage.setItem("userToken", token);
       setToken(token)
+      setUser(user)
 
 
-      if (user.role === "admin") {
+      if (user?.role === "admin") {
       router.push("/attendance");
       } else {
           router.push("/home");
@@ -51,7 +52,7 @@ export default function LoginScreen() {
         resizeMode='contain'
       />
 
-      <Text style={styles.title}>SAMIRAN TRADERS</Text>
+      <Text style={styles.title}>SAMIRAN TRADESTARS</Text>
 
       {/* Login Text with Underline */}
       <View style={styles.loginTextContainer}>

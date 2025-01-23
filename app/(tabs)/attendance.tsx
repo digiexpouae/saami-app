@@ -14,7 +14,7 @@ const Attendance = () => {
         let response;
 
         // Check user role and call the appropriate API
-        if (user.role === "admin" ) {
+        if (user?.role === "admin" ) {
           response = await getAllAttendanceApi();
         } else {
           response = await getEmployeeAttendanceApi(user?._id);
@@ -38,21 +38,36 @@ return status === "checked_in" ? "checked In" : "checked out"
   }
   const renderItem = ({ item }) => {
     const time = new Date(item.time).toLocaleString(); // Format time into a readable string
-    const { role, username} = user
     return (
       <View style={styles.attendanceItem}>
-        <Text style={styles.timeText}>
-          You <Text style={[item.status ==='checked_in'?styles.statusText: styles.checkoutText]}>{getStatus(item.status)} </Text>{" "}
-          at {time}
-        </Text>
-
-
-        {/* Conditionally render userId and username based on user role */}
-        {user.role === "admin" && (
-          <View style={styles.userInfo}>
-            <Text style={styles.userInfoText}>UserId: {item.user._id}</Text>
-            <Text style={styles.userInfoText}>Name: {item.user.username}</Text>
-          </View>
+        {user?.role !== "admin" ? (
+          <Text style={styles.timeText}>
+            You{" "}
+            <Text
+              style={[
+                item.status === "checked_in"
+                  ? styles.statusText
+                  : styles.checkoutText,
+              ]}
+            >
+              {getStatus(item.status)}{" "}
+            </Text>{" "}
+            at {time}
+          </Text>
+        ) : (
+          <Text>
+            {item.user.username}{" "}
+            <Text
+              style={[
+                item.status === "checked_in"
+                  ? styles.statusText
+                  : styles.checkoutText,
+              ]}
+            >
+              {getStatus(item.status)}{" "}
+              </Text>{" "}
+              at {time}
+          </Text>
         )}
       </View>
     );

@@ -12,19 +12,18 @@ import useLocationSlice from "@/hooks/useEmployee"; // Assuming this is how you 
 
 const Profile = () => {
   const router = useRouter();
-  const { user, isLoggedIn } = useLocationSlice((state) => state);
+  const { user, isLoggedIn , setUser} = useLocationSlice((state) => state);
   console.log("user info " , user)
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("userToken");
-    await AsyncStorage.removeItem("isLoggedIn");
-    await AsyncStorage.removeItem("userId");
-    router.push("/Login");
+    setUser(null)
+    router.push("/");
   };
 
   return (
     <ScrollView style={styles.container}>
-      {user?._id ? (
+      {user ? (
         <>
           {/* Profile Banner */}
           <View style={styles.profileBanner}>
@@ -48,7 +47,7 @@ const Profile = () => {
           </View>
 
           {/* Logout Button */}
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <TouchableOpacity style={styles.logoutButton} onPress={() =>handleLogout()}>
             <Text style={styles.logoutButtonText}>Logout</Text>
           </TouchableOpacity>
         </>

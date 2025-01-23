@@ -10,9 +10,9 @@ const path  = usePathname()
   const state = useLocationSlice(state => state)
 
   useEffect(() => {
-    if (!state.user) {
+    if (!state?.user) {
       getUserByToken().then((user) => {
-        state.setUser(user.data)
+        state.setUser(user?.data)
       });
     }
   }, [path]);
