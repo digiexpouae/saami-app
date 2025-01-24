@@ -52,7 +52,7 @@ export default function LoginScreen() {
         resizeMode='contain'
       />
 
-      <Text style={styles.title}>SAMIRAN TRADESTARS</Text>
+      <Text style={styles.title}>Saami Tradestar</Text>
 
       {/* Login Text with Underline */}
       <View style={styles.loginTextContainer}>
@@ -109,13 +109,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     justifyContent: "center", // Moves the content to the bottom
     paddingBottom: 80,
-    //  justifyContent: "flex-end", // Moves the content to the bottom
+    //  justifyContent: "flex-center", // Moves the content to the bottom
     // Adjust to control bottom spacing// Adjust to control bottom spacing
   },
   logo: {
-    width: 200,
-    height: 100,
-    // marginBottom: 20, // Space between the logo and the title
+    width: 150,
+    height: 150,
+    marginBottom: 15, // Space between the logo and the title
   },
   loadingText: {
     fontSize: 16,

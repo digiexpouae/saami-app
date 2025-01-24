@@ -22,7 +22,7 @@ const Activities = () => {
 
     fetchActivityData();
   }, []);
-console.log(activityData)
+
   const renderCard = (data) => (
     <View style={styles.card} key={data._id}>
       <Text style={styles.cardTitle}>Activity on {data._id}</Text>

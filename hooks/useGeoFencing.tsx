@@ -79,12 +79,12 @@ export default function useGeoFencing() {
 
   useEffect(() => {
     const regions = [
-      {
-        identifier: "region1",
-        latitude: 28.653779,
-        longitude: 77.223430,
-        radius: 50,
-      },
+        {
+          identifier: "region1",
+          latitude: user?.warehouse?.location?.latitude ?? 0,
+          longitude: user?.warehouse?.location?.longitude ?? 0,
+          radius: 100,
+        }
     ];
     startGeofencing(regions);
     return async () => {
