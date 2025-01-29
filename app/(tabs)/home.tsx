@@ -1,58 +1,48 @@
-import React from "react";
+import {
+  checkinApi,
+  checkoutApi,
+  getCheckinStatus,
+} from "@/services/apiHandlers";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
-import useLocationSlice from "@/hooks/useEmployee"; // Import the Zustand store
-import { checkinApi, checkoutApi } from "@/services/apiHandlers"; // Import API functions
-import  useGeoFencing  from "@/hooks/useGeoFencing"; // Import the useGeoFencing hook
+import { Button } from "react-native-paper";
 export default function HomeScreen() {
-  const { isInsideOffice, isCheckedIn, setCheckIn } = useLocationSlice((state) => state); // Get state from Zustand store
+  const [values, setValues] = useState({
+    loading: false,
+    status: false,
+  });
 
-  const { regionName } = useGeoFencing(); 
-  
-  // Get function from useGeoFencing hook
-  const handleCheckInOut = async () => {
-    if (!isInsideOffice) {
-      alert("Please enter the office to check in!");
-      return;
-    }
-
-    if (!isCheckedIn) {
-   
-      await checkinApi();
-      setCheckIn(true); 
+  const [refresh, setRefresh] = useState(false);
+  const handleCheckinCheckout = async () => {
+    const status = await getCheckinStatus();
+    if (status) {
+      checkoutApi();
     } else {
-      
-      await checkoutApi();
-      setCheckIn(false); 
+      checkinApi();
     }
+    setRefresh(!refresh);
   };
+
+  useEffect(() => {
+    const getStatus = async () => {
+      setValues((prev) => ({ ...prev, loading: true }));
+      const res = await getCheckinStatus();
+      setValues((prev) => ({ ...prev, loading: false, status: res }));
+    };
+
+    getStatus();
+  }, [refresh]);
 
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        {/* Show error message if user is outside the office */}
-        {!isInsideOffice && (
-          <Text variant="bodyMedium" style={styles.error}>
-            Please go back to the office during working hours!
-          </Text>
-        )}
-  
-        {/* Show region name */}
-        <Text variant="bodyMedium" style={styles.error}>
-          {regionName}  
-        </Text>
-        <Text variant="titleLarge" style={styles.title}>
-          {`Tap here to check ${isCheckedIn ? `Out` : `In`}`}
-        </Text>
-
         {/* Button to check in or out */}
         <Button
-          mode="contained"
-          style={isCheckedIn ? styles.checkout_button : styles.checkin_button}
-          onPress={handleCheckInOut}
-          disabled={!isInsideOffice} // Disable button if not inside office
+          mode='contained'
+          style={values.status ? styles.checkout_button : styles.checkin_button}
+          onPress={handleCheckinCheckout}
         >
-          {isCheckedIn ? "Check Out" : "Check In"}
+          {values.status ? "Check Out" : "Check In"}
         </Button>
       </View>
     </View>

@@ -35,10 +35,10 @@ const TabLayout = () => {
       })}
     >
       <Tabs.Screen name="home" options={{ tabBarLabel: "Home" }} />
-      <Tabs.Screen name="activities" options={{ tabBarLabel: "Activities" }} />
-      <Tabs.Screen name="attendance" options={{ tabBarLabel: "Attendance" }} />  
+      {/* <Tabs.Screen name="activities" options={{ tabBarLabel: "Activities" }} /> */}
+      <Tabs.Screen name="attendance" options={{ tabBarLabel: "Attendance" }} />
       <Tabs.Screen name="profile" options={{ tabBarLabel: "Profile" }} />
-      
+
     </Tabs>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Card } from 'react-native';
-import  {getEmployeeActivityApi}  from '../../services/apiHandlers' // Assuming this is your API handler
+import  {getEmployeeActivityApi}  from '../services/apiHandlers' // Assuming this is your API handler
 
 const Activities = () => {
   const [activityData, setActivityData] = useState(null);
@@ -34,9 +34,9 @@ const Activities = () => {
   return (
     <View style={styles.container}>
       {activityData ? (
-        activityData.map((data) => renderCard(data)) 
+        activityData.map((data) => renderCard(data))
       ) : (
-        <Text>Loading...</Text> 
+        <Text>Loading...</Text>
       )}
     </View>
   );

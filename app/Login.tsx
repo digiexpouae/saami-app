@@ -29,9 +29,6 @@ export default function LoginScreen() {
 
       await AsyncStorage.setItem("userToken", token);
       setToken(token)
-      setUser(user)
-
-
       if (user?.role === "admin") {
       router.push("/attendance");
       } else {
