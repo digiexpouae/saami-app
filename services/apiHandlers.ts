@@ -87,7 +87,15 @@ export const getUserByToken = async () => {
   }
 }
 
+export const calculateDistanceApi = async (data) => {
+  try {
+    const res = await api.post("/users/distance", data);
+    return res.data.data
 
+} catch (error) {
+
+}
+};
 export const getCheckinStatus = async () => {
   try {
     const res = await api.post(`/users/getCheckinStatus`);

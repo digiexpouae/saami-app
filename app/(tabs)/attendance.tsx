@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { getEmployeeAttendanceApi ,getAllAttendanceApi} from '@/services/apiHandlers'; // Adjust this import as per your project structure
 import useLocationSlice from "@/hooks/useEmployee";
+import { usePathname } from 'expo-router';
 const Attendance = () => {
   const [attendanceData, setAttendanceData] = useState([]);
+    const path = usePathname();
    const { isCheckedIn , userId,user} = useLocationSlice(state => state);
 
 
@@ -13,25 +15,24 @@ const Attendance = () => {
       try {
         let response;
 
-        // Check user role and call the appropriate API
-        if (user?.role === "admin" ) {
-          response = await getAllAttendanceApi();
-        } else {
-          response = await getEmployeeAttendanceApi(user?._id);
-        }
+        if (path==="/Login") return
+          if (user?.role === "admin") {
+            // Check user role and call the appropriate API
+            response = await getAllAttendanceApi();
+          } else {
+            response = await getEmployeeAttendanceApi(user?._id);
+          }
 
-        if (response?.status === 'success') {
+        if (response?.status === "success") {
           setAttendanceData(response.data);
-        } else {
-          console.error('Error fetching data');
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     };
 
     fetchAttendance();
-  }, [isCheckedIn]);
+  }, [path]);
 
   const getStatus = (status) => {
 return status === "checked_in" ? "checked In" : "checked out"
@@ -56,7 +57,7 @@ return status === "checked_in" ? "checked In" : "checked out"
           </Text>
         ) : (
           <Text>
-            {item.user.username}{" "}
+            {item?.user?.username}{" "}
             <Text
               style={[
                 item.status === "checked_in"
@@ -80,7 +81,7 @@ return status === "checked_in" ? "checked In" : "checked out"
 
       {attendanceData.length > 0 ? (
         <FlatList
-          data={attendanceData.reverse()}
+          data={attendanceData}
           renderItem={renderItem}
           keyExtractor={(item) => item._id}
         />
