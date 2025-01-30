@@ -20,8 +20,10 @@ const TabLayout = () => {
             iconName = "list";
           } else if (route.name === "profile") {
             iconName = "person";
-          } else if (route.name === "attendance") { // Remove extra space here
-            iconName = "clipboard";  // Change to clipboard or any other icon you prefer
+          } else if (route.name === "attendance") { 
+            iconName = "clipboard"; 
+          }else if (route.name === "warehouses") {
+            iconName = "business"; 
           }
 
           return <Icon name={iconName} size={size} color={color} />;
@@ -37,6 +39,7 @@ const TabLayout = () => {
       <Tabs.Screen name="home" options={{ tabBarLabel: "Home" }} />
       <Tabs.Screen name="activities" options={{ tabBarLabel: "Activities" }} />
       <Tabs.Screen name="attendance" options={{ tabBarLabel: "Attendance" }} />  
+      <Tabs.Screen name="warehouses" options={{ tabBarLabel: "Warehouses" }} />
       <Tabs.Screen name="profile" options={{ tabBarLabel: "Profile" }} />
       
     </Tabs>
