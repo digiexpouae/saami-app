@@ -81,9 +81,30 @@ export const getEmployeeAttendanceApi = async (id = "1") => {
 export const getUserByToken = async () => {
   try {
 
-    return await api.post(`/users/token`).then((res) => res.data)
+    const data = await api.post(`/users/token`)
+    return data.data.data
   } catch (error) {
     console.log(error);
+
+  }
+}
+
+export const calculateDistanceApi = async (data) => {
+  try {
+    const res = await api.post("/users/distance", data);
+    return res.data.data
+
+  } catch (error) {
+
+  }
+};
+export const getCheckinStatus = async () => {
+  try {
+    const res = await api.post(`/users/getCheckinStatus`);
+    const status = await res.data.data
+    return status;
+
+  } catch (error) {
 
   }
 }

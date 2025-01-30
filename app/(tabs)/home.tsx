@@ -1,59 +1,82 @@
-import React from "react";
+import {
+  calculateDistanceApi,
+  checkinApi,
+  checkoutApi,
+  getCheckinStatus,
+} from "@/services/apiHandlers";
+import * as Location from "expo-location";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
-import useLocationSlice from "@/hooks/useEmployee"; // Import the Zustand store
-import { checkinApi, checkoutApi } from "@/services/apiHandlers"; // Import API functions
-import  useGeoFencing  from "@/hooks/useGeoFencing"; // Import the useGeoFencing hook
 export default function HomeScreen() {
-  const { isInsideOffice, isCheckedIn, setCheckIn } = useLocationSlice((state) => state); // Get state from Zustand store
+  const [values, setValues] = useState({
+    loading: false,
+    status: false,
+  });
+  const [error, setError] = useState('')
+  const  [loading, setLoading] = useState(false)
 
-  const { regionName } = useGeoFencing(); 
-  
-  // Get function from useGeoFencing hook
-  const handleCheckInOut = async () => {
-    if (!isInsideOffice) {
-      alert("Please enter the office to check in!");
-      return;
+  const [refresh, setRefresh] = useState(false);
+  const handleCheckinCheckout = async () => {
+  setLoading(true)
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    console.log(status)
+        if (status !== "granted") {
+          console.warn("Location permission not granted");
+          setLoading(false)
+          return;
+    }
+    const location = await Location.getCurrentPositionAsync({});
+    const { latitude, longitude } = location.coords
+    console.log(location.coords)
+const data = { userLatitude: latitude, userLongitude:longitude };
+    const calculateDistance = await calculateDistanceApi(data)
+    if (calculateDistance === false) {
+        setError(
+          "Please Be Present Inside Office First Before Trying To Checkin/Checkout"
+      );
+      setLoading(false)
+
+      setTimeout(() => {
+
+        setError("")
+      }, 1000*10)
+      return
     }
 
-    if (!isCheckedIn) {
-   
-      await checkinApi();
-      setCheckIn(true); 
+    const checkin_status = await getCheckinStatus();
+    if (checkin_status) {
+      checkoutApi();
     } else {
-      
-      await checkoutApi();
-      setCheckIn(false); 
+      checkinApi();
     }
+    setLoading(false)
+    setRefresh(!refresh);
   };
+
+  useEffect(() => {
+    const getStatus = async () => {
+      setValues((prev) => ({ ...prev, loading: true }));
+      const res = await getCheckinStatus();
+      setValues((prev) => ({ ...prev, loading: false, status: res }));
+    };
+
+    getStatus();
+  }, [refresh]);
 
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        {/* Show error message if user is outside the office */}
-        {!isInsideOffice && (
-          <Text variant="bodyMedium" style={styles.error}>
-            Please go back to the office during working hours!
-          </Text>
-        )}
-  
-        {/* Show region name */}
-        <Text variant="bodyMedium" style={styles.error}>
-          {regionName}  
-        </Text>
-        <Text variant="titleLarge" style={styles.title}>
-          {`Tap here to check ${isCheckedIn ? `Out` : `In`}`}
-        </Text>
-
         {/* Button to check in or out */}
+        <Text style={styles.error}>{error}</Text>
+        { loading === true ? <Text>Loading ...</Text> :
         <Button
-          mode="contained"
-          style={isCheckedIn ? styles.checkout_button : styles.checkin_button}
-          onPress={handleCheckInOut}
-          disabled={!isInsideOffice} // Disable button if not inside office
+          mode='contained'
+          style={values.status ? styles.checkout_button : styles.checkin_button}
+          onPress={handleCheckinCheckout}
         >
-          {isCheckedIn ? "Check Out" : "Check In"}
-        </Button>
+          {values.status ? "Check Out" : "Check In"}
+        </Button>}
       </View>
     </View>
   );

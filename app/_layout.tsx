@@ -5,18 +5,22 @@ import "../global.css";
 import useLocationSlice from "@/hooks/useEmployee";
 import { getUserByToken } from "@/services/apiHandlers";
 
+
 const RootLayout = () => {
-const path  = usePathname()
-  const state = useLocationSlice(state => state)
+  const path = usePathname();
+  const state = useLocationSlice((state) => state);
 
   useEffect(() => {
-    if (!state?.user) {
-      getUserByToken().then((user) => {
-        state.setUser(user?.data)
-      });
-    }
+    const setupUserByToken = async () => {
+      const res = await getUserByToken();
+      const userObj = {
+        _id: res.id,
+        ...res,
+      };
+      state.setUser(userObj);
+    };
+    setupUserByToken();
   }, [path]);
-
 
   return (
     <SafeAreaView style={styles.safeArea}>

@@ -41,7 +41,7 @@ const TabLayout = () => {
       <Tabs.Screen name="attendance" options={{ tabBarLabel: "Attendance" }} />  
       <Tabs.Screen name="warehouses" options={{ tabBarLabel: "Warehouses" }} />
       <Tabs.Screen name="profile" options={{ tabBarLabel: "Profile" }} />
-      
+
     </Tabs>
   );
 };
