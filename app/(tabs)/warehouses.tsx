@@ -49,20 +49,23 @@ const Warehouses = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Select a Warehouse</Text>
 
-      <DropDownPicker
-        open={open}
-        value={value} 
-        items={warehouses.map((warehouse) => ({
-          label: warehouse.name,
-          value: warehouse._id,
-        }))}
-        placeholder="Select Warehouse"
-        containerStyle={styles.dropdownContainer}
-        style={styles.dropdownStyle}
-        dropDownStyle={styles.dropdownList}
-        setOpen={setOpen} 
-        setValue={setValue} 
-      />
+<DropDownPicker
+  open={open}
+  value={value}
+  items={warehouses.map((warehouse) => ({
+    label: warehouse.name,
+    value: warehouse._id,
+  }))}
+  placeholder="Select Warehouse"
+  containerStyle={styles.dropdownContainer}
+  style={styles.dropdownStyle}
+  dropDownContainerStyle={styles.dropdownList} 
+  setOpen={setOpen}
+  setValue={setValue}
+  zIndex={3000} 
+  zIndexInverse={1000} 
+/>
+
 
       {statusLoading ? (
         <ActivityIndicator size="large" color="#007bff" style={styles.statusLoader} />
@@ -109,13 +112,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   dropdownContainer: {
+    width: '100%', // Ensure it spans full width
     marginBottom: 20,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
+    zIndex: 3000, // Ensures it appears above other UI elements
   },
   dropdownStyle: {
     backgroundColor: '#fff',
@@ -124,11 +123,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     height: 50,
   },
-  dropdownList: {
-    backgroundColor: '#fff',
+  dropDownContainerStyle: {
     borderColor: '#ddd',
     borderRadius: 8,
-    marginTop: 8,
+    zIndex: 2000, // Ensure dropdown is above other elements
   },
   statusLoader: {
     marginTop: 30,
@@ -143,6 +141,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 8,
+    flexDirection: 'column', // Ensures elements are stacked properly
   },
   statusHeader: {
     flexDirection: 'row',
@@ -157,7 +156,8 @@ const styles = StyleSheet.create({
   },
   statusSection: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
+    alignItems: 'center', // Ensure text aligns properly
     marginTop: 10,
   },
   statusLabel: {
@@ -173,13 +173,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 30,
+    padding: 10, // Ensure no text overlap
   },
   emptyText: {
     fontSize: 16,
     color: '#888',
     fontStyle: 'italic',
+    textAlign: 'center', // Centers the text properly
   },
 });
+
 
 
 
