@@ -2,10 +2,11 @@ import React from "react";
 import { Tabs } from "expo-router";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useColorScheme } from "react-native";
+import useLocationSlice from "@/hooks/useEmployee";
 
 const TabLayout = () => {
   const colorScheme = useColorScheme();
-
+  const user = useLocationSlice((state) => state.user);
   return (
     <Tabs
       screenOptions={({ route }) => ({
@@ -20,10 +21,10 @@ const TabLayout = () => {
             iconName = "list";
           } else if (route.name === "profile") {
             iconName = "person";
-          } else if (route.name === "attendance") { 
-            iconName = "clipboard"; 
+          } else if (route.name === "attendance") {
+            iconName = "clipboard";
           }else if (route.name === "warehouses") {
-            iconName = "business"; 
+            iconName = "business";
           }
 
           return <Icon name={iconName} size={size} color={color} />;
@@ -36,11 +37,23 @@ const TabLayout = () => {
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tabs.Screen name="home" options={{ tabBarLabel: "Home" }} />
-      <Tabs.Screen name="activities" options={{ tabBarLabel: "Activities" }} />
-      <Tabs.Screen name="attendance" options={{ tabBarLabel: "Attendance" }} />  
-      <Tabs.Screen name="warehouses" options={{ tabBarLabel: "Warehouses" }} />
-      <Tabs.Screen name="profile" options={{ tabBarLabel: "Profile" }} />
+      <Tabs.Screen
+        name='home'
+
+        options={{ headerShown: false, tabBarLabel: "Home" }}
+      />
+      <Tabs.Screen
+        name='attendance'
+        options={{ headerShown: false, tabBarLabel: "Attendance" }}
+      />
+      <Tabs.Screen
+        name='profile'
+        options={{ headerShown: false, tabBarLabel: "Profile" }}
+      />
+      <Tabs.Screen
+        name='warehouses'
+        options={{ headerShown: false, tabBarLabel: "Warehouses" , href: user?.role ==='admin' ? '/warehouses' : null }}
+      />
 
     </Tabs>
   );
