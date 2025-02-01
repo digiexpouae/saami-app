@@ -18,6 +18,8 @@ const EMPLOYEE_ACTIVITY = "notify/my-activity";
 
 const EMPLOYEE_ATTENDANCE = "attendance/get-summary";
 const GET_ALL_ATTENDANCE = "attendance/get-all";
+const GET_WAREHOUSE_EMPLOYEE_STATUS = "attendance/get-status";
+const GET_ALL_WAREHOUSES = "warehouses";
 
 export const checkinApi = async () => {
   try {
@@ -92,9 +94,9 @@ export const calculateDistanceApi = async (data) => {
     const res = await api.post("/users/distance", data);
     return res.data.data
 
-} catch (error) {
+  } catch (error) {
 
-}
+  }
 };
 export const getCheckinStatus = async () => {
   try {
@@ -114,3 +116,20 @@ export const getAllAttendanceApi = async () => {
 
   }
 }
+
+export const getAllWarehouses = async () => {
+  try {
+    const res = await api.get(GET_ALL_WAREHOUSES).then((res) => res.data);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const getWarehouseEmployeeStatus = async (warehouseId: any) => {
+  try {
+    return await api.post(GET_WAREHOUSE_EMPLOYEE_STATUS, { warehouseId }).then((res) => res.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
