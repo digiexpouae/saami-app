@@ -40,7 +40,7 @@ const data = { userLatitude: latitude, userLongitude:longitude };
       setTimeout(() => {
 
         setError("")
-      }, 1000*10)
+      }, 1000*30)
       return
     }
 
