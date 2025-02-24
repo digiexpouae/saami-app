@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Button } from 'react-native';
 import { getEmployeeAttendanceApi ,getAllAttendanceApi} from '@/services/apiHandlers'; // Adjust this import as per your project structure
 import useLocationSlice from "@/hooks/useEmployee";
 import { usePathname } from 'expo-router';
@@ -14,18 +14,13 @@ const Attendance = () => {
     const fetchAttendance = async () => {
       try {
         let response;
+        if (path === "/Login" || path ==="login" || path ==="Login") return;
 
-        if (path==="/Login") return
-          if (user?.role === "admin") {
-            // Check user role and call the appropriate API
-            response = await getAllAttendanceApi();
-          } else {
-            response = await getEmployeeAttendanceApi(user?._id);
-          }
 
-        if (response?.status === "success") {
-          setAttendanceData(response.data);
-        }
+        response = await getAllAttendanceApi();
+        setAttendanceData(response);
+
+
       } catch (error) {
         console.error("Error:", error);
       }
@@ -37,49 +32,71 @@ const Attendance = () => {
   const getStatus = (status) => {
 return status === "checked_in" ? "checked In" : "checked out"
   }
+
+  const returnISTtime = (oldTime:Date) => {
+
+    const time = new Date(oldTime).toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+    });
+    return time
+}
+
+
   const renderItem = ({ item }) => {
-    const time = new Date(item.time).toLocaleString(); // Format time into a readable string
+
+    const { user, date} = item
+
+    const time = returnISTtime(date)
+
     return (
       <View style={styles.attendanceItem}>
-        {user?.role !== "admin" ? (
-          <Text style={styles.timeText}>
-            You{" "}
-            <Text
-              style={[
-                item.status === "checked_in"
-                  ? styles.statusText
-                  : styles.checkoutText,
-              ]}
-            >
-              {getStatus(item.status)}{" "}
-            </Text>{" "}
-            at {time}
-          </Text>
-        ) : (
-          <Text>
-            {item?.user?.username}{" "}
-            <Text
-              style={[
-                item.status === "checked_in"
-                  ? styles.statusText
-                  : styles.checkoutText,
-              ]}
-            >
-              {getStatus(item.status)}{" "}
-              </Text>{" "}
-              at {time}
-          </Text>
-        )}
+        <View style={styles.flexbox}>
+
+        <Text>{ user.username.toUpperCase()} </Text>
+          <Text style={styles.timeText}>{time.substring(0,9)}</Text>
+        </View>
+        {
+          Array.isArray(item.sessions) && item.sessions.length &&
+
+
+          <FlatList
+            data={item.sessions}
+            keyExtractor={(item) => item._id}
+          renderItem={({ item }) => {
+              console.log(item);
+
+              const { checkInTime, checkOutTime } = item;
+            return (
+              <View>
+                <View style={styles.flexbox}>
+                  <Text>Checkin At:</Text>
+                  <Text>{returnISTtime(checkInTime)}</Text>
+                </View>
+                <View style={styles.flexbox}>
+                  <Text>CheckOut At:</Text>
+                  <Text>{returnISTtime(checkOutTime)}</Text>
+                </View>
+              </View>
+            );
+          }} />
+        }
       </View>
     );
   };
 
   return (
     <View style={styles.container}>
+      <Button
+        title='Refresh'
+        color={"#18364a"}
+        onPress={() => {
+          getAllAttendanceApi();
+        }}
+      ></Button>
       <Text style={styles.heading}>Attendance Records </Text>
-      <Text style={styles.heading}> Of 30 Days</Text>
+      <Text style={styles.heading}> Of All Employees</Text>
 
-      {attendanceData.length > 0 ? (
+      {Array.isArray(attendanceData) && attendanceData?.length > 0 ? (
         <FlatList
           data={attendanceData}
           renderItem={renderItem}
@@ -118,7 +135,7 @@ const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 16,
-    color: '#333',
+    color: 'green',
     marginBottom: 8,
   },
   statusText: {
@@ -129,11 +146,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color:'red'
   },
-   userInfo: {
+  userInfo: {
+    display: 'flex',
+    justifyContent:'space-between',
     marginTop: 12,
     paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: '#E0E0E0',
+  },
+  flexbox: {
+    flexDirection:'row',
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   userInfoText: {
     fontSize: 14,

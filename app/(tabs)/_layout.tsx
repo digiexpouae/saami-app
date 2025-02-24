@@ -11,7 +11,11 @@ const TabLayout = () => {
     <Tabs
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: { height: 60, paddingBottom: 5, backgroundColor: colorScheme === "dark" ? "#222" : "#fff" },
+        tabBarStyle: {
+          height: 60,
+          paddingBottom: 5,
+          backgroundColor: colorScheme === "dark" ? "#222" : "#fff",
+        },
         tabBarIcon: ({ color, size }) => {
           let iconName;
 
@@ -23,7 +27,7 @@ const TabLayout = () => {
             iconName = "person";
           } else if (route.name === "attendance") {
             iconName = "clipboard";
-          }else if (route.name === "warehouses") {
+          } else if (route.name === "warehouses") {
             iconName = "business";
           }
 
@@ -39,22 +43,28 @@ const TabLayout = () => {
     >
       <Tabs.Screen
         name='home'
-
-        options={{ headerShown: false, tabBarLabel: "Home" }}
+        options={{
+          headerShown: false,
+          tabBarLabel: "Home",
+          href: user?.role === "admin" ? null : "/home",
+        }}
       />
       <Tabs.Screen
         name='attendance'
         options={{ headerShown: false, tabBarLabel: "Attendance" }}
       />
       <Tabs.Screen
+        name='warehouses'
+        options={{
+          headerShown: false,
+          tabBarLabel: "Warehouses",
+          href: user?.role === "admin" ? "/warehouses" : null,
+        }}
+      />
+      <Tabs.Screen
         name='profile'
         options={{ headerShown: false, tabBarLabel: "Profile" }}
       />
-      <Tabs.Screen
-        name='warehouses'
-        options={{ headerShown: false, tabBarLabel: "Warehouses" , href: user?.role ==='admin' ? '/warehouses' : null }}
-      />
-
     </Tabs>
   );
 };

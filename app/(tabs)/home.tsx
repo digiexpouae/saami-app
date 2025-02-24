@@ -7,70 +7,74 @@ import {
 } from "@/services/apiHandlers";
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Button, Text } from "react-native-paper";
+import { FontAwesome } from "react-native-vector-icons";
 export default function HomeScreen() {
   const [values, setValues] = useState({
     loading: false,
     status: false,
   });
-  const [error, setError] = useState('')
-  const  [loading, setLoading] = useState(false)
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [refresh, setRefresh] = useState(false);
 
-
   //  handler
-const handleCheckinCheckout = async () => {
-  setLoading(true);
+  const handleCheckinCheckout = async () => {
+    setLoading(true);
 
-  try {
-    // 1️⃣ Check Location Permissions
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      console.warn("Location permission not granted");
+    try {
+      // 1️⃣ Check Location Permissions
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.warn("Location permission not granted");
+        setLoading(false);
+        return;
+      }
+
+      console.log("Status:", status);
+
+      // 2️⃣ Get Last Known Location (Fast)
+      let location = await Location.getLastKnownPositionAsync({});
+
+      console.log(
+        "Location:",
+        location.coords.latitude,
+        location.coords.longitude
+      );
+
+      // 3️⃣ If No Last Known Location, Fetch Fresh GPS Data
+      if (!location) {
+        console.log("Fetching fresh GPS location...");
+        location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High, // High accuracy for better results
+        });
+      }
+
+      if (!location) {
+        console.warn("Unable to retrieve location");
+        setLoading(false);
+        return;
+      }
+
+      const { latitude, longitude } = location.coords;
+      console.log("Location:", latitude, longitude);
+
+      const data = { userLatitude: latitude, userLongitude: longitude };
+
+      // 4️⃣ Call API with Location Data
+      const result = await toggleCheckinCheckout(data);
+
+      console.log("Check-in/out result:", result);
+    } catch (error) {
+      console.error("Error fetching location:", error);
+    } finally {
+      // 5️⃣ Always Stop Loading (Even on Error)
       setLoading(false);
-      return;
+      setRefresh(!refresh);
     }
-
-    console.log("Status:", status);
-
-    // 2️⃣ Get Last Known Location (Fast)
-    let location = await Location.getLastKnownPositionAsync({});
-
-    console.log("Location:", location.coords.latitude, location.coords.longitude);
-
-    // 3️⃣ If No Last Known Location, Fetch Fresh GPS Data
-    if (!location) {
-      console.log("Fetching fresh GPS location...");
-      location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High, // High accuracy for better results
-      });
-    }
-
-    if (!location) {
-      console.warn("Unable to retrieve location");
-      setLoading(false);
-      return;
-    }
-
-    const { latitude, longitude } = location.coords;
-    console.log("Location:", latitude, longitude);
-
-    const data = { userLatitude: latitude, userLongitude: longitude };
-
-    // 4️⃣ Call API with Location Data
-    const result = await toggleCheckinCheckout(data);
-
-    console.log("Check-in/out result:", result);
-  } catch (error) {
-    console.error("Error fetching location:", error);
-  } finally {
-    // 5️⃣ Always Stop Loading (Even on Error)
-    setLoading(false);
-    setRefresh(!refresh);
-  }
-};
+  };
 
   // const handleCheckinCheckout = async () => {
   // setLoading(true)
@@ -86,9 +90,6 @@ const handleCheckinCheckout = async () => {
   //   console.log(location.coords)
   //   const data = { userLatitude: latitude, userLongitude: longitude };
 
-
-
-
   // const result =  await toggleCheckinCheckout(data)
 
   //   console.log(result)
@@ -99,10 +100,9 @@ const handleCheckinCheckout = async () => {
   useEffect(() => {
     const getStatus = async () => {
       const res = await getCheckinStatus();
-      setValues(prev => ({...prev, status: res}))
+      setValues((prev) => ({ ...prev, status: res }));
 
-
-      console.log(res, "Checkin status")
+      console.log(res, "Checkin status");
     };
 
     getStatus();
@@ -113,14 +113,22 @@ const handleCheckinCheckout = async () => {
       <View style={styles.content}>
         {/* Button to check in or out */}
         <Text style={styles.error}>{error}</Text>
-        { loading === true ? <Text>Loading ...</Text> :
-        <Button
-          mode='contained'
-          style={values.status ? styles.checkout_button : styles.checkin_button}
-          onPress={handleCheckinCheckout}
-        >
-          {values.status ? "Check Out" : "Check In"}
-        </Button>}
+        {loading === true ? (
+          <Text>Loading ...</Text>
+        ) : (
+          <>
+            <View
+              style={
+                values.status ? styles.checkout_button : styles.checkin_button
+              }
+            >
+              <TouchableOpacity onPress={handleCheckinCheckout}>
+                <FontAwesome name='hand-pointer-o' size={100} color='white' />
+                <Text style={styles.title}>{values.status ? "Clock Out" :"Clock In"} </Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
       </View>
     </View>
   );
@@ -145,14 +153,27 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: 16,
     textAlign: "center",
-    color: "#36454F",
+    color: "white",
+    fontSize: 24,
     fontWeight: "bold",
   },
   checkin_button: {
-    backgroundColor: "green",
+    backgroundColor: "#18364a",
+    width: 170,
+    height: 170,
+    borderRadius: 100,
+    justifyContent: "center",
+    display: "flex",
+    alignItems: "center",
   },
   checkout_button: {
-    backgroundColor: "red",
+    backgroundColor: "#e64834",
+    width: 170,
+    height: 170,
+    borderRadius: 100,
+    justifyContent: "center",
+    display: "flex",
+    alignItems: "center",
   },
   error: {
     color: "red",

@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   profileBanner: {
-    backgroundColor: "#4CAF50", // Vibrant green background for the profile section
+    backgroundColor: "#18364a", // Vibrant green background for the profile section
     padding: 20,
     borderRadius: 10,
     alignItems: "center",
@@ -101,12 +101,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   logoutButton: {
-    backgroundColor: "#E53E3E", // Bright red logout button
+    backgroundColor: "#e64834", // Bright red logout button
     paddingVertical: 12,
     paddingHorizontal: 40,
     borderRadius: 8,
     alignItems: "center",
-    marginTop: 20,
+    flex: 1,
   },
   logoutButtonText: {
     color: "#fff",

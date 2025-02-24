@@ -27,14 +27,13 @@ export default function LoginScreen() {
   const [error, setError] = useState("");
 
   // util functions
-   const checkBiometricAvailability = async () => {
-     const compatible = await LocalAuthentication.hasHardwareAsync();
-     const enrolled = await LocalAuthentication.isEnrolledAsync();
-     setIsBiometricAvailable(compatible && enrolled);
+  const checkBiometricAvailability = async () => {
+    const compatible = await LocalAuthentication.hasHardwareAsync();
+    const enrolled = await LocalAuthentication.isEnrolledAsync();
+    setIsBiometricAvailable(compatible && enrolled);
   };
 
-
-  const saveCredentials = async (email:string, password:string) => {
+  const saveCredentials = async (email: string, password: string) => {
     await SecureStore.setItemAsync("userEmail", email);
     await SecureStore.setItemAsync("userPassword", password);
   };
@@ -45,32 +44,31 @@ export default function LoginScreen() {
     const password = await SecureStore.getItemAsync("userPassword");
     return { email, password };
   };
-   const handleBiometricAuth = async () => {
-     const result = await LocalAuthentication.authenticateAsync({
-       promptMessage: "Login with Fingerprint",
-       fallbackLabel: "Enter Password",
-     });
+  const handleBiometricAuth = async () => {
+    const result = await LocalAuthentication.authenticateAsync({
+      promptMessage: "Login with Fingerprint",
+      fallbackLabel: "Enter Password",
+    });
 
-     if (result.success) {
-       const { email, password } = await getCredentials();
-       if (email && password) {
-         Alert.alert("Success", `Logged in as ${email}`);
-         // Here you can redirect the user to the home screen
-         await handleLogin(email, password);
-       } else {
-         Alert.alert(
-           "Error",
-           "No saved credentials found. Please log in manually first."
-         );
-       }
-     } else {
-       Alert.alert("Error", "Authentication failed.");
-     }
-   };
-
+    if (result.success) {
+      const { email, password } = await getCredentials();
+      if (email && password) {
+        Alert.alert("Success", `Logged in as ${email}`);
+        // Here you can redirect the user to the home screen
+        await handleLogin(email, password);
+      } else {
+        Alert.alert(
+          "Error",
+          "No saved credentials found. Please log in manually first."
+        );
+      }
+    } else {
+      Alert.alert("Error", "Authentication failed.");
+    }
+  };
 
   const router = useRouter();
-  const {setToken, setUser} = useLocationSlice((state) => state);
+  const { setToken, setUser } = useLocationSlice((state) => state);
 
   const handleLogin = async (email, password) => {
     try {
@@ -145,15 +143,19 @@ export default function LoginScreen() {
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       {/* Login Button */}
-      <TouchableOpacity onPress={() =>handleLogin(email, password)} style={styles.loginButton}>
+      <TouchableOpacity
+        onPress={() => handleLogin(email, password)}
+        style={styles.loginButton}
+      >
         <Text style={styles.loginButtonText}>Log in</Text>
       </TouchableOpacity>
       {isBiometricAvailable && (
-        <Button
-          title='Login with Fingerprint'
+        <TouchableOpacity
           onPress={handleBiometricAuth}
-          color='green'
-        />
+          style={styles.loginButton}
+        >
+          <Text style={styles.loginButtonText}>Fingerprint</Text>
+        </TouchableOpacity>
       )}
     </View>
   );
@@ -232,9 +234,10 @@ const styles = StyleSheet.create({
   loginButton: {
     width: "100%",
     padding: 15,
-    backgroundColor: "#000",
+    backgroundColor: "#18364a",
     borderRadius: 8,
     alignItems: "center",
+    marginTop: 20,
   },
   loginButtonText: {
     color: "#fff",

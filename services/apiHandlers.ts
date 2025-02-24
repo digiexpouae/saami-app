@@ -17,7 +17,7 @@ const EMPLOYEE_ACTIVITY = "notify/my-activity";
 const TOGGLE_API = "attendance/toggle-attendance";
 
 const EMPLOYEE_ATTENDANCE = "attendance/get-summary";
-const GET_ALL_ATTENDANCE = "attendance/get-all";
+const GET_ALL_ATTENDANCE = "attendance/getAllEmployeeAttendances";
 const GET_WAREHOUSE_EMPLOYEE_STATUS = "attendance/get-status";
 const GET_ALL_WAREHOUSES = "warehouses";
 
@@ -109,8 +109,12 @@ export const getCheckinStatus = async () => {
 
 export const getAllAttendanceApi = async () => {
   try {
-    return await api.get(GET_ALL_ATTENDANCE).then((res) => res.data);
-  } catch (error) {}
+    const { data } = await api.post(GET_ALL_ATTENDANCE)
+    
+    return data?.data
+  } catch (error) {
+    console.log(error)
+  }
 };
 
 export const getAllWarehouses = async () => {
