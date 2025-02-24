@@ -13,7 +13,6 @@ import useLocationSlice from "@/hooks/useEmployee"; // Assuming this is how you 
 const Profile = () => {
   const router = useRouter();
   const { user, isLoggedIn , setUser} = useLocationSlice((state) => state);
-  // console.log("user info " , user)
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("userToken");

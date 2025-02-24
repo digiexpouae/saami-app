@@ -63,7 +63,6 @@ return status === "checked_in" ? "checked In" : "checked out"
             data={item.sessions}
             keyExtractor={(item) => item._id}
           renderItem={({ item }) => {
-              console.log(item);
 
               const { checkInTime, checkOutTime } = item;
             return (

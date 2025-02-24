@@ -28,45 +28,35 @@ export default function HomeScreen() {
       // 1️⃣ Check Location Permissions
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        console.warn("Location permission not granted");
         setLoading(false);
         return;
       }
 
-      console.log("Status:", status);
 
       // 2️⃣ Get Last Known Location (Fast)
       let location = await Location.getLastKnownPositionAsync({});
 
-      console.log(
-        "Location:",
-        location.coords.latitude,
-        location.coords.longitude
-      );
+
 
       // 3️⃣ If No Last Known Location, Fetch Fresh GPS Data
       if (!location) {
-        console.log("Fetching fresh GPS location...");
         location = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.High, // High accuracy for better results
         });
       }
 
       if (!location) {
-        console.warn("Unable to retrieve location");
         setLoading(false);
         return;
       }
 
       const { latitude, longitude } = location.coords;
-      console.log("Location:", latitude, longitude);
 
       const data = { userLatitude: latitude, userLongitude: longitude };
 
       // 4️⃣ Call API with Location Data
       const result = await toggleCheckinCheckout(data);
 
-      console.log("Check-in/out result:", result);
     } catch (error) {
       console.error("Error fetching location:", error);
     } finally {
@@ -102,7 +92,6 @@ export default function HomeScreen() {
       const res = await getCheckinStatus();
       setValues((prev) => ({ ...prev, status: res }));
 
-      console.log(res, "Checkin status");
     };
 
     getStatus();
