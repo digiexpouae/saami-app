@@ -6,38 +6,92 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  Alert,
+  Button,
 } from "react-native";
 import { login } from "../services/authService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for the eye icon
 import useLocationSlice from "@/hooks/useEmployee"; // Import Zustand store
+import * as LocalAuthentication from "expo-local-authentication";
+import * as SecureStore from "expo-secure-store";
 
 export default function LoginScreen() {
   const [secureText, setSecureText] = useState(true); // State to toggle password visibility
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
+
   const [error, setError] = useState("");
+
+  // util functions
+   const checkBiometricAvailability = async () => {
+     const compatible = await LocalAuthentication.hasHardwareAsync();
+     const enrolled = await LocalAuthentication.isEnrolledAsync();
+     setIsBiometricAvailable(compatible && enrolled);
+  };
+
+
+  const saveCredentials = async (email:string, password:string) => {
+    await SecureStore.setItemAsync("userEmail", email);
+    await SecureStore.setItemAsync("userPassword", password);
+  };
+
+  // Get stored credentials
+  const getCredentials = async () => {
+    const email = await SecureStore.getItemAsync("userEmail");
+    const password = await SecureStore.getItemAsync("userPassword");
+    return { email, password };
+  };
+   const handleBiometricAuth = async () => {
+     const result = await LocalAuthentication.authenticateAsync({
+       promptMessage: "Login with Fingerprint",
+       fallbackLabel: "Enter Password",
+     });
+
+     if (result.success) {
+       const { email, password } = await getCredentials();
+       if (email && password) {
+         Alert.alert("Success", `Logged in as ${email}`);
+         // Here you can redirect the user to the home screen
+         await handleLogin(email, password);
+       } else {
+         Alert.alert(
+           "Error",
+           "No saved credentials found. Please log in manually first."
+         );
+       }
+     } else {
+       Alert.alert("Error", "Authentication failed.");
+     }
+   };
+
 
   const router = useRouter();
   const {setToken, setUser} = useLocationSlice((state) => state);
 
-  const handleLogin = async () => {
+  const handleLogin = async (email, password) => {
     try {
       const { token, user } = await login(email, password);
+      await saveCredentials(email, password);
 
       await AsyncStorage.setItem("userToken", token);
-      setToken(token)
+      setToken(token);
       if (user?.role === "admin") {
-      router.push("/attendance");
+        router.push("/attendance");
       } else {
-          router.push("/home");
-        }
+        router.push("/home");
+      }
     } catch (err) {
       setError(err?.message);
     }
   };
+
+  useEffect(() => {
+    checkBiometricAvailability();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -91,9 +145,16 @@ export default function LoginScreen() {
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       {/* Login Button */}
-      <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+      <TouchableOpacity onPress={() =>handleLogin(email, password)} style={styles.loginButton}>
         <Text style={styles.loginButtonText}>Log in</Text>
       </TouchableOpacity>
+      {isBiometricAvailable && (
+        <Button
+          title='Login with Fingerprint'
+          onPress={handleBiometricAuth}
+          color='green'
+        />
+      )}
     </View>
   );
 }
