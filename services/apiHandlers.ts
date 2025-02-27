@@ -111,7 +111,6 @@ export const getCheckinStatus = async () => {
 export const sendTokenToServer = async (payload) => {
   try {
     await api.post("users/register-token", payload);
-    console.log("Token sent to server");
   } catch (error) {
     console.error("Error sending token to server:", error);
   }

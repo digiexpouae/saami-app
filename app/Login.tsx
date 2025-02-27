@@ -116,7 +116,6 @@ export default function LoginScreen() {
       registerForPushNotificationsAsync().then((token) => {
         if (token) {
           setExpoPushToken(token);
-          console.log("TOKEN", token);
 
 
         }
@@ -124,12 +123,10 @@ export default function LoginScreen() {
 
       notificationListener.current =
         Notifications.addNotificationReceivedListener((notification) => {
-          console.log("Notification Received:", notification);
         });
 
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener((response) => {
-          console.log("Notification Response:", response);
         });
 
       return () => {
