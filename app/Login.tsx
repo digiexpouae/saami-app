@@ -1,21 +1,25 @@
-import React, { useState, useEffect } from "react";
+import useLocationSlice from "@/hooks/useEmployee"; // Import Zustand store
+import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for the eye icon
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as LocalAuthentication from "expo-local-authentication";
+import { useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
+import  { useEffect, useState, useRef } from "react";
 import {
-  View,
+  Alert,
+  Image,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  Image,
-  Alert,
-  Button,
+  View
 } from "react-native";
 import { login } from "../services/authService";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for the eye icon
-import useLocationSlice from "@/hooks/useEmployee"; // Import Zustand store
-import * as LocalAuthentication from "expo-local-authentication";
-import * as SecureStore from "expo-secure-store";
+
+import { sendTokenToServer } from "@/services/apiHandlers";
+import { registerForPushNotificationsAsync } from "@/services/notificationService";
+import * as Notifications from "expo-notifications";
+
 
 export default function LoginScreen() {
   const [secureText, setSecureText] = useState(true); // State to toggle password visibility
@@ -25,6 +29,8 @@ export default function LoginScreen() {
   const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
 
   const [error, setError] = useState("");
+    const [expoPushToken, setExpoPushToken] = useState("");
+
 
   // util functions
   const checkBiometricAvailability = async () => {
@@ -44,6 +50,7 @@ export default function LoginScreen() {
     const password = await SecureStore.getItemAsync("userPassword");
     return { email, password };
   };
+
   const handleBiometricAuth = async () => {
     const result = await LocalAuthentication.authenticateAsync({
       promptMessage: "Login with Fingerprint",
@@ -73,6 +80,7 @@ export default function LoginScreen() {
   const handleLogin = async (email, password) => {
     try {
       const { token, user } = await login(email, password);
+     await sendTokenToServer({ appToken: token });
       await saveCredentials(email, password);
 
       await AsyncStorage.setItem("userToken", token);
@@ -90,6 +98,48 @@ export default function LoginScreen() {
   useEffect(() => {
     checkBiometricAvailability();
   }, []);
+
+
+
+    const notificationListener = useRef<Notifications.Subscription | undefined>(
+      undefined
+    ); // Correct type
+    const responseListener = useRef<Notifications.Subscription | undefined>(
+      undefined
+    ); // Correct type
+
+    useEffect(() => {
+      AsyncStorage.getItem("userToken").then((res) => {
+        setKey(res);
+      });
+
+      registerForPushNotificationsAsync().then((token) => {
+        if (token) {
+          setExpoPushToken(token);
+          console.log("TOKEN", token);
+
+
+        }
+      });
+
+      notificationListener.current =
+        Notifications.addNotificationReceivedListener((notification) => {
+          console.log("Notification Received:", notification);
+        });
+
+      responseListener.current =
+        Notifications.addNotificationResponseReceivedListener((response) => {
+          console.log("Notification Response:", response);
+        });
+
+      return () => {
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+        Notifications.removeNotificationSubscription(responseListener.current);
+      };
+    }, []);
+
 
   return (
     <View style={styles.container}>

@@ -73,7 +73,7 @@ return status === "checked_in" ? "checked In" : "checked out"
                 </View>
                 <View style={styles.flexbox}>
                   <Text>CheckOut At:</Text>
-                  <Text>{returnISTtime(checkOutTime)}</Text>
+                  <Text>{checkOutTime &&   returnISTtime(checkOutTime)}</Text>
                 </View>
               </View>
             );
