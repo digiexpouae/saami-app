@@ -80,11 +80,11 @@ export default function LoginScreen() {
   const handleLogin = async (email, password) => {
     try {
       const { token, user } = await login(email, password);
-     await sendTokenToServer({ appToken: token });
       await saveCredentials(email, password);
 
       await AsyncStorage.setItem("userToken", token);
       setToken(token);
+      await sendTokenToServer({ appToken: expoPushToken, authtoken : token });
       if (user?.role === "admin") {
         router.push("/attendance");
       } else {

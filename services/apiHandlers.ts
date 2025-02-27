@@ -5,6 +5,7 @@
 //get attendence details
 //get activites details
 
+import axios from "axios";
 import api from "./axios";
 
 const CHECK_IN = "attendance/check-in";
@@ -107,25 +108,22 @@ export const getCheckinStatus = async () => {
   } catch (error) {}
 };
 
-
 export const sendTokenToServer = async (payload) => {
-
   try {
-    await api.post("/register-token" , payload)
+    await api.post("users/register-token", payload);
     console.log("Token sent to server");
   } catch (error) {
     console.error("Error sending token to server:", error);
   }
-}
-
+};
 
 export const getAllAttendanceApi = async () => {
   try {
-    const { data } = await api.post(GET_ALL_ATTENDANCE)
+    const { data } = await api.post(GET_ALL_ATTENDANCE);
 
-    return data?.data
+    return data?.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 };
 
