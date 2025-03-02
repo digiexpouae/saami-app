@@ -27,6 +27,7 @@
         "ACCESS_COARSE_LOCATION",
         "ACCESS_BACKGROUND_LOCATION"
       ],
+      "googleServicesFile": "./google-services.json",
       "package": "com.themansabmeer.app"
     },
     "web": {
