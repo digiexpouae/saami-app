@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,37 +8,43 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import useLocationSlice from "@/hooks/useEmployee"; // Assuming this manages user state
+import { getUserByToken } from "@/services/apiHandlers";
 
 const Profile = () => {
+  const [user, setUser] = useState()
   const router = useRouter();
-  const { user, isLoggedIn, setUser } = useLocationSlice((state) => state);
 
-  // Ensure token is still valid on app load
   useEffect(() => {
     const checkUserToken = async () => {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        setUser(null);
+
         router.replace("/Login"); // Use replace to prevent navigation stacking
       }
     };
     checkUserToken();
   }, []);
 
-  // Handle logout
+
   const handleLogout = async () => {
     await AsyncStorage.removeItem("userToken");
-    setUser(null);
+
     router.replace("/Login");
   };
 
-  // Redirect if user is not logged in
+
   useEffect(() => {
-    if (!user) {
-      router.replace("/Login");
+    const fetchLoggedinUser = async () => {
+      const user = await getUserByToken();
+      setUser(user);
     }
-  }, [isLoggedIn, user]);
+
+
+    fetchLoggedinUser();
+  }, [])
+  console.log(user)
+
+
 
   return (
     <ScrollView style={styles.container}>
@@ -66,11 +72,11 @@ const Profile = () => {
           </View>
 
           {/* Logout Button */}
+        </>
+      ) : <Text>Looks Like Your Token Is Expired. Please Logout.</Text>}
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Text style={styles.logoutButtonText}>Logout</Text>
           </TouchableOpacity>
-        </>
-      ) : null}
     </ScrollView>
   );
 };
